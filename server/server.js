@@ -9,6 +9,19 @@ const io = new Server(PORT, {
 
 const rooms = new Map();
 
+function userList(room) {
+   const lista = [];
+
+   room.users.forEach((datos, id) => {
+    const usuario = {};
+    usuario.id = id;
+    usuario.username = datos.username;
+    lista.push(usuario);
+   });
+
+   return lista;
+}
+
 io.on('connection', (socket) => {
     console.log('Cliente conectado:', socket.id);
 
@@ -30,6 +43,8 @@ io.on('connection', (socket) => {
         }
         const room = rooms.get(roomName);
         room.users.set(socket.id, { username });
+        
+        io.to(roomName).emit('room_users', userList(room));
 
         console.log('Salas: ', JSON.stringify([...rooms], null, 2));
         ack({ ok: true });
@@ -41,6 +56,8 @@ io.on('connection', (socket) => {
         const room = rooms.get(socket.data.roomName);
         if (room) {
             room.users.delete(socket.id);
+        } else {
+            io.to(socket.data.roomName).emit('room_users', userList(room));
         }
 
         if( room.users.size === 0){
