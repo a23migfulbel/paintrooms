@@ -6,6 +6,6 @@ socket.on('connect', () => {
     console.log('conectado con id', socket.id);
     
     socket.emit('join_room', {roomName: 'Prova', username: 'Ana'}, (respuesta) => {
-        console.log('El servidor respondio:', respuesta)
+        console.log('El servidor respondio:', respuesta);
     });
 });
