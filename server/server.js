@@ -26,6 +26,14 @@ io.on('connection', (socket) => {
     console.log('Cliente conectado:', socket.id);
 
     socket.on('join_room', ({ roomName, username }, ack) => {
+
+        roomName = String(roomName || '').trim().slice(0, 30);
+        username = String(username || '').trim().slice(0, 20);
+
+        if (!roomName || !username) {
+        return ack({ ok: false, error: 'Nombre y sala obligatorios' });
+        }
+
         socket.join(roomName);
         socket.data.roomName = roomName;
         socket.data.username = username;
